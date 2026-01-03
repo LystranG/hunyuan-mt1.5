@@ -15,7 +15,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 # ================= 配置区域 =================
 MODEL1 = "./hunyuan-model/Tencent-Hunyuan/HY-MT1.5-1.8B"
 MODEL2 = "./hunyuan-model/Tencent-Hunyuan/HY-MT1___5-1___8B"
-MODEL_PATH = MODEL2
+MODEL_PATH = MODEL1
 
 PORT = 8000
 
