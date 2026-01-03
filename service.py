@@ -2,8 +2,10 @@ import torch
 import uvicorn
 import time
 import uuid
+import argparse
 import os
 import json
+from dotenv import load_dotenv
 from threading import Thread
 from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.responses import StreamingResponse
@@ -12,19 +14,41 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, TextIteratorStreamer
 
+# ================= 参数配置 =================
+load_dotenv()
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--bf",
+    type=int,
+    choices=[8, 16],
+    default=16,
+    help="Bit format 只能是8或者16"
+)
+
+parser.add_argument(
+    "--model",
+    type=str,
+    choices=['1.8b', '8b'],
+    default='1.8b',
+    help="--model 模型版本只能为1.8b 或 8b"
+)
+
+args = parser.parse_args()
+
 # ================= 配置区域 =================
 MODEL1 = "./hunyuan-model/Tencent-Hunyuan/HY-MT1.5-1.8B"
 MODEL2 = "./hunyuan-model/Tencent-Hunyuan/HY-MT1___5-1___8B"
-MODEL_PATH = MODEL1
+MODEL_PATH = MODEL1 if args.model == '1.8b' else MODEL2
 
-PORT = 8000
+PORT = os.getenv("PORT", 8000)
 
-API_KEY = "zymzym1234"
+API_KEY = os.getenv("API_KEY", "")
 
 # 显存控制开关
 # True  = 开启 8-bit 量化 (显存占用极低，适合多任务并行)
 # False = 使用 bf16 原生精度 (显存占用较高，速度略快)
-USE_8BIT_QUANTIZATION = False
+USE_8BIT_QUANTIZATION = args.fb == 8
 # ===========================================
 
 app = FastAPI(title="Hunyuan-MT OpenAI Server")
