@@ -48,7 +48,7 @@ API_KEY = os.getenv("API_KEY", "")
 # 显存控制开关
 # True  = 开启 8-bit 量化 (显存占用极低，适合多任务并行)
 # False = 使用 bf16 原生精度 (显存占用较高，速度略快)
-USE_8BIT_QUANTIZATION = args.fb == 8
+USE_8BIT_QUANTIZATION = args.bf == 8
 # ===========================================
 
 app = FastAPI(title="Hunyuan-MT OpenAI Server")
