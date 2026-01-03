@@ -41,7 +41,7 @@ MODEL1 = "./hunyuan-model/Tencent-Hunyuan/HY-MT1.5-1.8B"
 MODEL2 = "./hunyuan-model/Tencent-Hunyuan/HY-MT1___5-1___8B"
 MODEL_PATH = MODEL1 if args.model == '1.8b' else MODEL2
 
-PORT = os.getenv("PORT", 8000)
+PORT = int(os.getenv("PORT", 8000))
 
 API_KEY = os.getenv("API_KEY", "")
 
