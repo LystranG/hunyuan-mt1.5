@@ -4,6 +4,7 @@ import time
 import uuid
 import argparse
 import os
+import sys
 import json
 from dotenv import load_dotenv
 from threading import Thread
@@ -166,6 +167,26 @@ def verify_api_key(
         raise HTTPException(status_code=401, detail="未授权：API key 无效或缺失")
 
 
+def _build_uvicorn_log_config() -> dict:
+    """
+    uvicorn 默认日志 handler 经常写到 stderr，很多进程管理器会把 stderr 归类为 error 日志。
+    这里把 uvicorn 的 default/access handler 改成 stdout，避免 INFO 被错误标记为 ERROR。
+    """
+    try:
+        from copy import deepcopy
+        from uvicorn.config import LOGGING_CONFIG
+
+        config = deepcopy(LOGGING_CONFIG)
+        handlers = config.get("handlers", {})
+        if "default" in handlers:
+            handlers["default"]["stream"] = "ext://sys.stdout"
+        if "access" in handlers:
+            handlers["access"]["stream"] = "ext://sys.stdout"
+        return config
+    except Exception:
+        return {}
+
+
 # ================= 核心接口 =================
 @app.post(
     "/v1/chat/completions",
@@ -325,4 +346,10 @@ async def list_models():
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=PORT)
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=PORT,
+        log_level=os.getenv("LOG_LEVEL", "info").lower(),
+        log_config=_build_uvicorn_log_config(),
+    )
