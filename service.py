@@ -15,7 +15,7 @@ load_dotenv()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--bf", type=int, choices=[8, 16], default=16)
-parser.add_argument("--model", type=str, choices=["1.8b", "8b"], default="1.8b")
+parser.add_argument("--model", type=str, choices=["1.8b", "7b"], default="1.8b")
 args = parser.parse_args()
 
 # 读取启动参数与环境变量

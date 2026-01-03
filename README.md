@@ -3,16 +3,18 @@
 ## 功能
 
 - OpenAI 兼容接口：`POST /v1/chat/completions`、`GET /v1/models`
-- 支持 `stream=true`（SSE）
+- 支持SSE
 - API Key 鉴权（`Authorization: Bearer <key>` 或 `X-API-Key: <key>`）
-- CORS（浏览器跨域）
-- 队列 + 并发调度（队列满返回 429）
+- 流量控制
 
 ## 快速开始
 
 1) 安装依赖（示例）
 
-建议用 conda 装 PyTorch + CUDA，其它依赖用 `uv`/`pip` 装。
+建议用 conda: 
+```shell
+conda env create -f environment.yml
+```
 
 2) 配置环境变量
 
@@ -21,26 +23,11 @@
 3) 启动服务
 
 ```bash
-python service.py --model 1.8b --bf 16
+python service.py --model 1.8b --bf 16 --model 8b
 ```
 
-`--bf 8` 表示启用 8-bit 量化，`--bf 16` 表示 bf16 原生精度。
-
-## 调用示例
-
-非流式：
-
-```bash
-export API_KEY="your-key"
-bash examples/curl_chat.sh
-```
-
-流式（SSE）：
-
-```bash
-export API_KEY="your-key"
-bash examples/curl_chat_stream.sh
-```
+`--bf 8` 表示启用 8-bit 量化，`--bf 16` 表示 bf16 原生精度，默认为bf16
+`--model 7b` 表示使用7b模型，`--model 1.8b` 表示使用1.8b模型 ，默认为1.8b
 
 ## 关键环境变量
 
